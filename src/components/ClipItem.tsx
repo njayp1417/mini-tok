@@ -8,7 +8,7 @@ interface ClipItemProps {
 export default function ClipItem({ clip }: ClipItemProps) {
   const [likes, setLikes] = useState(clip.likes)
   const [liked, setLiked] = useState(false)
-  const [muted, setMuted] = useState(true)
+  const [muted, setMuted] = useState(false)
   const [playing, setPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -53,18 +53,23 @@ export default function ClipItem({ clip }: ClipItemProps) {
       
       const playVideo = async () => {
         try {
-          video.muted = true
+          video.muted = false
           await video.play()
           setPlaying(true)
         } catch (err) {
-          console.log('Autoplay failed:', err)
+          // If unmuted autoplay fails, try muted
+          try {
+            video.muted = true
+            setMuted(true)
+            await video.play()
+            setPlaying(true)
+          } catch (err2) {
+            console.log('Autoplay failed:', err2)
+          }
         }
       }
       
-      // Try to play immediately
       playVideo()
-      
-      // Also try when video can play
       video.addEventListener('loadeddata', playVideo)
       
       const observer = new IntersectionObserver(

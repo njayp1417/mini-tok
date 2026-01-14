@@ -3,10 +3,9 @@ import { likeClip, Clip } from '@/services/supabase'
 
 interface ClipItemProps {
   clip: Clip
-  onVideoReady?: () => void
 }
 
-export default function ClipItem({ clip, onVideoReady }: ClipItemProps) {
+export default function ClipItem({ clip }: ClipItemProps) {
   const [likes, setLikes] = useState(clip.likes)
   const [liked, setLiked] = useState(false)
   const [muted, setMuted] = useState(false)
@@ -63,12 +62,6 @@ export default function ClipItem({ clip, onVideoReady }: ClipItemProps) {
   useEffect(() => {
     if (clip.video_url && videoRef.current) {
       const video = videoRef.current
-      
-      const handleCanPlay = () => {
-        if (onVideoReady) onVideoReady()
-      }
-      video.addEventListener('canplay', handleCanPlay)
-      
       video.play().catch(() => {})
       setPlaying(true)
       
@@ -88,14 +81,9 @@ export default function ClipItem({ clip, onVideoReady }: ClipItemProps) {
       )
 
       observer.observe(video)
-      return () => {
-        video.removeEventListener('canplay', handleCanPlay)
-        observer.disconnect()
-      }
-    } else if (!clip.video_url && onVideoReady) {
-      onVideoReady()
+      return () => observer.disconnect()
     }
-  }, [clip.video_url, onVideoReady])
+  }, [clip.video_url])
 
   return (
     <div className="h-screen w-full snap-start bg-black relative overflow-hidden">

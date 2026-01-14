@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://crkirlcnxlhljaynjeyg.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNya2lybGNueGxobGpheW5qZXlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjM5NDUsImV4cCI6MjA4MzkzOTk0NX0.Mur3xglg3DNl8xdK72skps4UIGqtaf0-y1v95bzoBj4"

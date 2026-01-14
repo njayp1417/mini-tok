@@ -8,7 +8,7 @@ interface ClipItemProps {
 export default function ClipItem({ clip }: ClipItemProps) {
   const [likes, setLikes] = useState(clip.likes)
   const [liked, setLiked] = useState(false)
-  const [muted, setMuted] = useState(false)
+  const [muted, setMuted] = useState(true)
   const [playing, setPlaying] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -62,8 +62,16 @@ export default function ClipItem({ clip }: ClipItemProps) {
   useEffect(() => {
     if (clip.video_url && videoRef.current) {
       const video = videoRef.current
-      video.play().catch(() => {})
-      setPlaying(true)
+      
+      // Force autoplay with user interaction workaround
+      const playVideo = () => {
+        video.muted = true
+        setMuted(true)
+        video.play().catch(() => {})
+        setPlaying(true)
+      }
+      
+      playVideo()
       
       const observer = new IntersectionObserver(
         (entries) => {

@@ -5,7 +5,7 @@ export default function BottomNav() {
   const currentPath = router.pathname
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-16 bg-black/95 backdrop-blur-xl border-t border-white/10 flex items-center justify-around px-4 z-50 safe-area-inset-bottom">
+    <div className="fixed bottom-0 left-0 right-0 h-14 bg-black/95 backdrop-blur-xl border-t border-white/10 flex items-center justify-around px-4 z-50 safe-area-inset-bottom">
       <button
         onClick={() => {
           if (currentPath === '/') {
@@ -14,25 +14,25 @@ export default function BottomNav() {
             router.push('/')
           }
         }}
-        className="flex flex-col items-center transition-all duration-200 active:scale-90 py-2"
+        className="flex flex-col items-center transition-all duration-200 active:scale-90 py-1.5"
       >
         <svg
-          className={`w-7 h-7 ${currentPath === '/' ? 'text-white' : 'text-white/50'}`}
+          className={`w-6 h-6 ${currentPath === '/' ? 'text-white' : 'text-white/50'}`}
           fill="currentColor"
           viewBox="0 0 20 20"
         >
           <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
         </svg>
-        <span className={`text-xs mt-0.5 font-semibold ${currentPath === '/' ? 'text-white' : 'text-white/50'}`}>Home</span>
+        <span className={`text-[10px] mt-0.5 font-semibold ${currentPath === '/' ? 'text-white' : 'text-white/50'}`}>Home</span>
       </button>
 
       <button
         onClick={() => router.push('/upload')}
-        className="transition-all duration-200 active:scale-90 -mt-2"
+        className="transition-all duration-200 active:scale-90 -mt-1"
       >
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center shadow-lg">
+        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center shadow-lg">
           <svg
-            className="w-7 h-7 text-white"
+            className="w-6 h-6 text-white"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -44,17 +44,17 @@ export default function BottomNav() {
 
       <button
         onClick={() => router.push('/search')}
-        className="flex flex-col items-center transition-all duration-200 active:scale-90 py-2"
+        className="flex flex-col items-center transition-all duration-200 active:scale-90 py-1.5"
       >
         <svg
-          className={`w-7 h-7 ${currentPath === '/search' ? 'text-white' : 'text-white/50'}`}
+          className={`w-6 h-6 ${currentPath === '/search' ? 'text-white' : 'text-white/50'}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <span className={`text-xs mt-0.5 font-semibold ${currentPath === '/search' ? 'text-white' : 'text-white/50'}`}>Search</span>
+        <span className={`text-[10px] mt-0.5 font-semibold ${currentPath === '/search' ? 'text-white' : 'text-white/50'}`}>Search</span>
       </button>
     </div>
   )

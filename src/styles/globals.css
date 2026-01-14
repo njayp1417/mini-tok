@@ -74,4 +74,11 @@
   .safe-area-inset-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }

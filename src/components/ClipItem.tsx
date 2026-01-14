@@ -9,20 +9,8 @@ export default function ClipItem({ clip }: ClipItemProps) {
   const [likes, setLikes] = useState(clip.likes)
   const [liked, setLiked] = useState(false)
   const [muted, setMuted] = useState(true)
-  const [playing, setPlaying] = useState(true)
+  const [playing, setPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
-
-  const handleVideoClick = () => {
-    if (videoRef.current) {
-      if (playing) {
-        videoRef.current.pause()
-        setPlaying(false)
-      } else {
-        videoRef.current.play()
-        setPlaying(true)
-      }
-    }
-  }
 
   const handleLike = async () => {
     if (liked) return
@@ -63,15 +51,21 @@ export default function ClipItem({ clip }: ClipItemProps) {
     if (clip.video_url && videoRef.current) {
       const video = videoRef.current
       
-      // Force autoplay with user interaction workaround
-      const playVideo = () => {
-        video.muted = true
-        setMuted(true)
-        video.play().catch(() => {})
-        setPlaying(true)
+      const playVideo = async () => {
+        try {
+          video.muted = true
+          await video.play()
+          setPlaying(true)
+        } catch (err) {
+          console.log('Autoplay failed:', err)
+        }
       }
       
+      // Try to play immediately
       playVideo()
+      
+      // Also try when video can play
+      video.addEventListener('loadeddata', playVideo)
       
       const observer = new IntersectionObserver(
         (entries) => {
@@ -89,7 +83,10 @@ export default function ClipItem({ clip }: ClipItemProps) {
       )
 
       observer.observe(video)
-      return () => observer.disconnect()
+      return () => {
+        video.removeEventListener('loadeddata', playVideo)
+        observer.disconnect()
+      }
     }
   }, [clip.video_url])
 
@@ -102,10 +99,9 @@ export default function ClipItem({ clip }: ClipItemProps) {
             src={clip.video_url}
             autoPlay
             loop
-            muted={muted}
+            muted
             playsInline
             className="w-full h-full object-cover"
-            onClick={handleVideoClick}
           />
           {!playing && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">

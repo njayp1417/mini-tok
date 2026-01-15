@@ -27,8 +27,9 @@ export default function Upload() {
     if (author.trim() && content.trim() && media) {
       setLoading(true)
       try {
+        const { data: { user } } = await supabase.auth.getUser()
         const mediaUrl = await uploadVideo(media)
-        await addClip(author, content, mediaUrl)
+        await addClip(author, content, mediaUrl, user?.id)
         if (preview) URL.revokeObjectURL(preview)
         router.push('/')
       } catch (error) {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
-import { addClip, uploadVideo } from '@/services/supabase'
+import { addClip, uploadVideo, supabase } from '@/services/supabase'
 import BottomNav from '@/components/BottomNav'
 
 export default function Upload() {

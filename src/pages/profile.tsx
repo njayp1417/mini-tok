@@ -234,7 +234,10 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
     setError('')
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google'
+        provider: 'google',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/` : undefined
+        }
       })
       if (error) throw error
     } catch (err: any) {

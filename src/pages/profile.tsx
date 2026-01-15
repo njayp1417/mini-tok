@@ -149,7 +149,10 @@ export default function Profile() {
 
           {/* Menu Items */}
           <div className="space-y-2">
-            <button className="w-full bg-black/40 backdrop-blur-xl rounded-xl p-4 border border-white/10 flex items-center justify-between active:scale-[0.98] transition-all">
+            <button 
+              onClick={() => router.push('/my-videos')}
+              className="w-full bg-black/40 backdrop-blur-xl rounded-xl p-4 border border-white/10 flex items-center justify-between active:scale-[0.98] transition-all"
+            >
               <div className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -162,7 +165,10 @@ export default function Profile() {
               </svg>
             </button>
 
-            <button className="w-full bg-black/40 backdrop-blur-xl rounded-xl p-4 border border-white/10 flex items-center justify-between active:scale-[0.98] transition-all">
+            <button 
+              onClick={() => router.push('/liked-videos')}
+              className="w-full bg-black/40 backdrop-blur-xl rounded-xl p-4 border border-white/10 flex items-center justify-between active:scale-[0.98] transition-all"
+            >
               <div className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />

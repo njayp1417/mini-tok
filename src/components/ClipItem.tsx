@@ -96,8 +96,9 @@ export default function ClipItem({ clip }: ClipItemProps) {
 
     const video = videoRef.current
 
-    // 🔒 REQUIRED for mobile autoplay
-    video.muted = true
+    // Check if user has interacted before
+    const hasInteracted = (window as any).userHasInteracted
+    video.muted = !hasInteracted
     video.playsInline = true
 
     const observer = new IntersectionObserver(
@@ -117,7 +118,6 @@ export default function ClipItem({ clip }: ClipItemProps) {
       { threshold: 0.6 }
     )
 
-    // ⏱️ Delay observer until splash/layout finishes
     const timeout = setTimeout(() => {
       observer.observe(video)
     }, 300)
@@ -134,7 +134,8 @@ export default function ClipItem({ clip }: ClipItemProps) {
 
     if (video.paused) {
       await video.play()
-      video.muted = false  // 🔓 Unmute after user interaction
+      video.muted = false
+      ;(window as any).userHasInteracted = true
       setPlaying(true)
     } else {
       video.pause()

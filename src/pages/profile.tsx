@@ -220,8 +220,7 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
-        onSuccess()
-        onClose()
+        window.location.href = '/'
       }
     } catch (err: any) {
       setError(err.message)

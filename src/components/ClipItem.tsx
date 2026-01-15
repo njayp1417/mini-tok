@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { likeClip, Clip } from '@/services/supabase'
+import { likeClip, unlikeClip, hasUserLiked, supabase, Clip } from '@/services/supabase'
 
 interface ClipItemProps {
   clip: Clip
@@ -9,9 +9,27 @@ export default function ClipItem({ clip }: ClipItemProps) {
   const [likes, setLikes] = useState(clip.likes)
   const [liked, setLiked] = useState(false)
   const [playing, setPlaying] = useState(false)
+  const [userId, setUserId] = useState<string | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUserId(user.id)
+        const isLiked = await hasUserLiked(clip.id, user.id)
+        setLiked(isLiked)
+      }
+    }
+    checkAuth()
+  }, [clip.id])
+
   const handleLike = async () => {
+    if (!userId) {
+      alert('Please sign in to like videos')
+      return
+    }
+
     if (liked) return
     
     const newLikes = likes + 1
@@ -19,7 +37,7 @@ export default function ClipItem({ clip }: ClipItemProps) {
     setLiked(true)
     
     try {
-      await likeClip(clip.id, likes)
+      await likeClip(clip.id, userId)
     } catch (error) {
       console.error('Error liking clip:', error)
       setLikes(likes)

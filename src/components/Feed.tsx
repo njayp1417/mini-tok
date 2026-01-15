@@ -83,7 +83,7 @@ export default function Feed() {
       
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto snap-y snap-mandatory scrollbar-hide transition-opacity duration-1000"
+        className="flex-1 overflow-y-auto snap-y snap-mandatory scrollbar-hide transition-opacity duration-1000 pb-14"
         style={{ opacity: showSplash ? 0 : 1 }}
       >
         {clips.map((clip) => (

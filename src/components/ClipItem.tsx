@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { likeClip, unlikeClip, hasUserLiked, supabase, Clip } from '@/services/supabase'
+import { likeClip, unlikeClip, hasUserLiked, followUser, unfollowUser, isFollowing, supabase, Clip } from '@/services/supabase'
 
 interface ClipItemProps {
   clip: Clip
@@ -8,6 +8,7 @@ interface ClipItemProps {
 export default function ClipItem({ clip }: ClipItemProps) {
   const [likes, setLikes] = useState(clip.likes)
   const [liked, setLiked] = useState(false)
+  const [following, setFollowing] = useState(false)
   const [playing, setPlaying] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -17,12 +18,16 @@ export default function ClipItem({ clip }: ClipItemProps) {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUserId(user.id)
-        const isLiked = await hasUserLiked(clip.id, user.id)
+        const [isLiked, isFollowingUser] = await Promise.all([
+          hasUserLiked(clip.id, user.id),
+          clip.user_id ? isFollowing(user.id, clip.user_id) : Promise.resolve(false)
+        ])
         setLiked(isLiked)
+        setFollowing(isFollowingUser)
       }
     }
     checkAuth()
-  }, [clip.id])
+  }, [clip.id, clip.user_id])
 
   const handleLike = async () => {
     if (!userId) {
@@ -42,6 +47,28 @@ export default function ClipItem({ clip }: ClipItemProps) {
       console.error('Error liking clip:', error)
       setLikes(likes)
       setLiked(false)
+    }
+  }
+
+  const handleFollow = async () => {
+    if (!userId) {
+      alert('Please sign in to follow users')
+      return
+    }
+
+    if (!clip.user_id) return
+
+    setFollowing(!following)
+
+    try {
+      if (following) {
+        await unfollowUser(userId, clip.user_id)
+      } else {
+        await followUser(userId, clip.user_id)
+      }
+    } catch (error) {
+      console.error('Error following user:', error)
+      setFollowing(following)
     }
   }
 
@@ -162,10 +189,19 @@ export default function ClipItem({ clip }: ClipItemProps) {
             </div>
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 opacity-30 animate-ping" />
             {/* Plus Button */}
-            <button className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-gradient-to-r from-pink-500 to-red-500 border-2 border-black flex items-center justify-center shadow-lg active:scale-90 transition-all">
-              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
-              </svg>
+            <button 
+              onClick={handleFollow}
+              className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full ${following ? 'bg-gray-600' : 'bg-gradient-to-r from-pink-500 to-red-500'} border-2 border-black flex items-center justify-center shadow-lg active:scale-90 transition-all`}
+            >
+              {following ? (
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              ) : (
+                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
+                </svg>
+              )}
             </button>
           </div>
           

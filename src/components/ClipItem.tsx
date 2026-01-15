@@ -65,45 +65,55 @@ export default function ClipItem({ clip }: ClipItemProps) {
   }
 
   useEffect(() => {
-    if (clip.video_url && videoRef.current) {
-      const video = videoRef.current
-      
-      const playVideo = async () => {
-        try {
-          video.muted = false
-          await video.play()
-          setPlaying(true)
-        } catch (err) {
-          console.log('Autoplay failed:', err)
-        }
-      }
-      
-      playVideo()
-      video.addEventListener('loadeddata', playVideo)
-      
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              video.muted = false
-              video.play().catch(() => {})
-              setPlaying(true)
-            } else {
-              video.pause()
-              setPlaying(false)
-            }
-          })
-        },
-        { threshold: 0.5 }
-      )
+    if (!clip.video_url || !videoRef.current) return
 
+    const video = videoRef.current
+
+    // 🔒 REQUIRED for mobile autoplay
+    video.muted = true
+    video.playsInline = true
+
+    const observer = new IntersectionObserver(
+      async ([entry]) => {
+        if (entry.isIntersecting) {
+          try {
+            await video.play()
+            setPlaying(true)
+          } catch (err) {
+            console.log('Play failed:', err)
+          }
+        } else {
+          video.pause()
+          setPlaying(false)
+        }
+      },
+      { threshold: 0.6 }
+    )
+
+    // ⏱️ Delay observer until splash/layout finishes
+    const timeout = setTimeout(() => {
       observer.observe(video)
-      return () => {
-        video.removeEventListener('loadeddata', playVideo)
-        observer.disconnect()
-      }
+    }, 300)
+
+    return () => {
+      clearTimeout(timeout)
+      observer.disconnect()
     }
   }, [clip.video_url])
+
+  const handleTogglePlay = async () => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (video.paused) {
+      await video.play()
+      video.muted = false  // 🔓 Unmute after user interaction
+      setPlaying(true)
+    } else {
+      video.pause()
+      setPlaying(false)
+    }
+  }
 
   return (
     <div className="h-[100dvh] w-full snap-start bg-black relative overflow-hidden flex items-center justify-center">
@@ -112,10 +122,10 @@ export default function ClipItem({ clip }: ClipItemProps) {
           <video
             ref={videoRef}
             src={clip.video_url}
-            autoPlay
             loop
             playsInline
             className="w-full h-full object-cover absolute inset-0"
+            onClick={handleTogglePlay}
           />
           {!playing && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">

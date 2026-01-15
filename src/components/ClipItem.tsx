@@ -95,16 +95,15 @@ export default function ClipItem({ clip }: ClipItemProps) {
     if (!clip.video_url || !videoRef.current) return
 
     const video = videoRef.current
-
-    // Check if user has interacted before
-    const hasInteracted = (window as any).userHasInteracted
-    video.muted = !hasInteracted
     video.playsInline = true
 
     const observer = new IntersectionObserver(
       async ([entry]) => {
         if (entry.isIntersecting) {
           try {
+            // 🔑 Check interaction flag RIGHT BEFORE playing
+            const hasInteracted = (window as any).userHasInteracted
+            video.muted = !hasInteracted
             await video.play()
             setPlaying(true)
           } catch (err) {

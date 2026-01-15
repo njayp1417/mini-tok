@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '@/services/supabase'
+import { supabase, getUserStats, getProfile, Profile as ProfileType } from '@/services/supabase'
 import BottomNav from '@/components/BottomNav'
 
 export default function Profile() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<ProfileType | null>(null)
+  const [stats, setStats] = useState({ following_count: 0, followers_count: 0, likes_count: 0 })
   const [loading, setLoading] = useState(true)
   const [showAuthModal, setShowAuthModal] = useState(false)
 
@@ -16,6 +18,17 @@ export default function Profile() {
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser()
     setUser(user)
+    
+    if (user) {
+      // Load profile and stats
+      const [profileData, statsData] = await Promise.all([
+        getProfile(user.id),
+        getUserStats(user.id)
+      ])
+      setProfile(profileData)
+      setStats(statsData)
+    }
+    
     setLoading(false)
   }
 
@@ -26,8 +39,28 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="h-[100dvh] bg-gradient-to-br from-black via-purple-950/20 to-black flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+      <div className="h-[100dvh] bg-gradient-to-br from-black via-purple-950/20 to-black flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40 backdrop-blur-xl flex-shrink-0">
+          <h1 className="text-white text-base font-black tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">Profile</h1>
+        </div>
+        <div className="flex-1 overflow-y-auto scrollbar-hide pb-16">
+          <div className="p-6">
+            <div className="flex flex-col items-center mb-6">
+              <div className="w-24 h-24 rounded-full bg-gray-800 animate-pulse mb-4" />
+              <div className="h-6 w-32 bg-gray-800 rounded animate-pulse mb-2" />
+              <div className="h-4 w-48 bg-gray-800 rounded animate-pulse" />
+            </div>
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              {[1,2,3].map(i => (
+                <div key={i} className="bg-black/40 backdrop-blur-xl rounded-xl p-3 border border-white/10 text-center">
+                  <div className="h-6 w-12 bg-gray-800 rounded animate-pulse mx-auto mb-2" />
+                  <div className="h-3 w-16 bg-gray-800 rounded animate-pulse mx-auto" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <BottomNav />
       </div>
     )
   }
@@ -93,22 +126,23 @@ export default function Profile() {
                 {user.email?.charAt(0).toUpperCase()}
               </div>
             </div>
-            <h2 className="text-white text-xl font-black mb-1">@{user.email?.split('@')[0]}</h2>
+            <h2 className="text-white text-xl font-black mb-1">@{profile?.username || user.email?.split('@')[0]}</h2>
             <p className="text-gray-400 text-xs">{user.email}</p>
+            {profile?.bio && <p className="text-gray-300 text-sm mt-2 text-center max-w-xs">{profile.bio}</p>}
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3 mb-6">
             <div className="bg-black/40 backdrop-blur-xl rounded-xl p-3 border border-white/10 text-center">
-              <p className="text-white text-lg font-black">0</p>
+              <p className="text-white text-lg font-black">{stats.following_count}</p>
               <p className="text-gray-400 text-xs">Following</p>
             </div>
             <div className="bg-black/40 backdrop-blur-xl rounded-xl p-3 border border-white/10 text-center">
-              <p className="text-white text-lg font-black">0</p>
+              <p className="text-white text-lg font-black">{stats.followers_count}</p>
               <p className="text-gray-400 text-xs">Followers</p>
             </div>
             <div className="bg-black/40 backdrop-blur-xl rounded-xl p-3 border border-white/10 text-center">
-              <p className="text-white text-lg font-black">0</p>
+              <p className="text-white text-lg font-black">{stats.likes_count}</p>
               <p className="text-gray-400 text-xs">Likes</p>
             </div>
           </div>

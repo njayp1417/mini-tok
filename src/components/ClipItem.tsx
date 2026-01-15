@@ -152,8 +152,8 @@ export default function ClipItem({ clip }: ClipItemProps) {
       {/* Ultra Premium Left Side - User Info & Caption */}
       <div className="absolute bottom-20 left-3 right-16 z-50 max-h-[30vh] overflow-hidden">
         {/* User Profile Section */}
-        <div className="flex items-center gap-2 mb-2">
-          {/* Premium Avatar */}
+        <div className="flex items-start gap-2 mb-2">
+          {/* Premium Avatar with Plus Button */}
           <div className="relative flex-shrink-0">
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-600 p-0.5 shadow-xl">
               <div className="w-full h-full rounded-full bg-gradient-to-br from-pink-500 via-purple-600 to-indigo-700 flex items-center justify-center font-black text-white text-sm shadow-inner">
@@ -161,17 +161,18 @@ export default function ClipItem({ clip }: ClipItemProps) {
               </div>
             </div>
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 opacity-30 animate-ping" />
+            {/* Plus Button */}
+            <button className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-gradient-to-r from-pink-500 to-red-500 border-2 border-black flex items-center justify-center shadow-lg active:scale-90 transition-all">
+              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
           </div>
           
           {/* Username */}
-          <span className="text-white font-bold text-sm tracking-tight drop-shadow-2xl flex-shrink-0">
+          <span className="text-white font-bold text-sm tracking-tight drop-shadow-2xl flex-shrink-0 mt-0.5">
             @{clip.author}
           </span>
-          
-          {/* Follow Button */}
-          <button className="ml-auto px-3 py-1 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full text-white text-xs font-bold shadow-lg active:scale-95 border border-white/20 flex-shrink-0">
-            Follow
-          </button>
         </div>
         
         {/* Caption */}

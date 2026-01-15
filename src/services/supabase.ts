@@ -57,3 +57,51 @@ export async function likeClip(id: string, currentLikes: number): Promise<void> 
   
   if (error) throw error
 }
+
+// Follow/Unfollow functions
+export async function followUser(followerId: string, followingId: string): Promise<void> {
+  const { error } = await supabase
+    .from('follows')
+    .insert({ follower_id: followerId, following_id: followingId })
+  
+  if (error) throw error
+}
+
+export async function unfollowUser(followerId: string, followingId: string): Promise<void> {
+  const { error } = await supabase
+    .from('follows')
+    .delete()
+    .eq('follower_id', followerId)
+    .eq('following_id', followingId)
+  
+  if (error) throw error
+}
+
+export async function isFollowing(followerId: string, followingId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('follows')
+    .select('*')
+    .eq('follower_id', followerId)
+    .eq('following_id', followingId)
+    .single()
+  
+  return !!data
+}
+
+export async function getFollowersCount(userId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('follows')
+    .select('*', { count: 'exact', head: true })
+    .eq('following_id', userId)
+  
+  return count || 0
+}
+
+export async function getFollowingCount(userId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('follows')
+    .select('*', { count: 'exact', head: true })
+    .eq('follower_id', userId)
+  
+  return count || 0
+}

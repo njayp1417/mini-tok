@@ -43,18 +43,17 @@ export default function BottomNav() {
       </button>
 
       <button
-        onClick={() => router.push('/search')}
+        onClick={() => router.push('/profile')}
         className="flex flex-col items-center transition-all duration-200 active:scale-90 py-1.5"
       >
         <svg
-          className={`w-6 h-6 ${currentPath === '/search' ? 'text-white' : 'text-white/50'}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+          className={`w-6 h-6 ${currentPath === '/profile' ? 'text-white' : 'text-white/50'}`}
+          fill="currentColor"
+          viewBox="0 0 20 20"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
         </svg>
-        <span className={`text-[10px] mt-0.5 font-semibold ${currentPath === '/search' ? 'text-white' : 'text-white/50'}`}>Search</span>
+        <span className={`text-[10px] mt-0.5 font-semibold ${currentPath === '/profile' ? 'text-white' : 'text-white/50'}`}>Profile</span>
       </button>
     </div>
   )
